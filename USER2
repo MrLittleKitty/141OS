@@ -1,0 +1,4 @@
+.save W
+XXXXZZZZ
+.end
+.print W
