@@ -39,9 +39,26 @@ public class UserThread extends Thread {
                         Main.DISK_ALLOCATOR.release(currentDisk);
                     }
                     else  if(currentFile != null) {
-                        manager.writeLine(currentFile,currentLine);
+                        Disk disk = Main.DISKS[currentDisk];
+                        FileInfo info = Main.DISK_MANAGER.getFileInfo(currentFile);
+                        if(info == null) {
+                            info = new FileInfo();
+                            info.diskNumber = currentDisk;
+                            info.fileLength = 0;
+                            info.startingSector = Main.DISK_MANAGER.getAndIncrementNextFreeSector(currentDisk);
+                            Main.DISK_MANAGER.createFile(currentFile, info);
+                        }
+                        int sectorOffset = info.startingSector+info.fileLength;
+                        info.fileLength += 1;
+
+                        disk.write(info.startingSector+sectorOffset,currentLine);
+
+                        //Because a file write takes 200 milliseconds
+                        Thread.sleep(200);
                     }
                 }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
