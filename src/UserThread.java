@@ -1,10 +1,11 @@
 import java.io.*;
 
-public class UserThread {
+public class UserThread extends Thread {
 
     private final int id;
     private final File file;
 
+    private int currentDisk = 0;
     private StringBuffer currentLine;
     private StringBuffer currentFile = null;
 
@@ -16,7 +17,9 @@ public class UserThread {
         currentLine = new StringBuffer();
     }
 
-    public void readFile(){
+    @Override
+    public void run() {
+
         try(FileReader fileReader = new FileReader(file)){
             try(BufferedReader reader = new BufferedReader(fileReader)){
                 String line = null;
@@ -26,12 +29,14 @@ public class UserThread {
 
                     if(currentLine.toString().startsWith(".save")) {
                         currentFile = new StringBuffer(currentLine.substring(6));
+                        currentDisk = Main.DISK_ALLOCATOR.request();
                     }
                     else if(currentLine.toString().startsWith(".print")) {
-                        manager.printFile(new StringBuffer(currentLine.substring(7)),new Printer(2));
+                        new PrintJobThread(new StringBuffer(currentLine.substring(7))).start();
                     }
                     else if(currentLine.toString().startsWith(".end")){
                         currentFile = null;
+                        Main.DISK_ALLOCATOR.release(currentDisk);
                     }
                     else  if(currentFile != null) {
                         manager.writeLine(currentFile,currentLine);
