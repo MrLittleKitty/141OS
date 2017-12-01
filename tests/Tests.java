@@ -102,7 +102,7 @@ public class Tests{
 
         print("Reading the test user file");
         print("Testing the commands save, end, and print.");
-        user.readFile();
+        //user.readFile();
 
         print("Asserting that the output file exists");
         assert file.exists();

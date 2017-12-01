@@ -15,6 +15,8 @@ public class PrintJobThread extends Thread {
         int printerIndex = Main.PRINTER_ALLOCATOR.request();
         Printer printer = Main.PRINTERS[printerIndex];
 
+        Main.print("Printing file "+fileName.toString()+" on printer "+printerIndex);
+
         StringBuffer sector = new StringBuffer();
         for(int i = 0; i < info.fileLength; i++) {
             sector.setLength(0);
@@ -36,6 +38,8 @@ public class PrintJobThread extends Thread {
                 e.printStackTrace();
             }
         }
+
+        Main.print("Printed file "+fileName.toString()+" on printer "+printerIndex);
 
         Main.PRINTER_ALLOCATOR.release(printerIndex);
     }

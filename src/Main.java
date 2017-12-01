@@ -5,9 +5,9 @@ import java.util.Scanner;
 
 public class Main {
 
-    static final int NUMBER_OF_USERS = 4;
-    static final int NUMBER_OF_DISKS = 2;
-    static final int NUMBER_OF_PRINTERS = 3;
+    private static final int NUMBER_OF_USERS = 4;
+    private static final int NUMBER_OF_DISKS = 2;
+    private static final int NUMBER_OF_PRINTERS = 3;
 
     public static final Disk[] DISKS = new Disk[NUMBER_OF_DISKS];
     public static final Printer[] PRINTERS = new Printer[NUMBER_OF_PRINTERS];
@@ -30,16 +30,12 @@ public class Main {
     }
 
     public static void main(String[] args) {
-
-//        Scanner scanner = new Scanner(System.in);
-//
-//        System.out.println("Enter the directory path for the input files");
-//        String path = scanner.nextLine();
-//
-//        File directory = new File(path);
-
         for(int i = 0; i < USERS.length; i++) {
             USERS[i].start();
         }
+    }
+
+    public static void print(String message) {
+        System.out.println(message);
     }
 }

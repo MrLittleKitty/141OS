@@ -8,11 +8,11 @@ public class DiskManager {
         nextFreeSectors = new int[numberOfDisks];
     }
 
-    public FileInfo getFileInfo(StringBuffer buffer) {
+    public synchronized FileInfo getFileInfo(StringBuffer buffer) {
         return directoryManager.lookup(buffer);
     }
 
-    public void createFile(StringBuffer fileName, FileInfo info) {
+    public synchronized void createFile(StringBuffer fileName, FileInfo info) {
         directoryManager.enter(fileName, info);
     }
 

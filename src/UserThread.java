@@ -30,11 +30,13 @@ public class UserThread extends Thread {
                     if(currentLine.toString().startsWith(".save")) {
                         currentFile = new StringBuffer(currentLine.substring(6));
                         currentDisk = Main.DISK_ALLOCATOR.request();
+                        Main.print("Saving file "+currentFile.toString()+" to disk "+currentDisk);
                     }
                     else if(currentLine.toString().startsWith(".print")) {
                         new PrintJobThread(new StringBuffer(currentLine.substring(7))).start();
                     }
                     else if(currentLine.toString().startsWith(".end")){
+                        Main.print("Saved file "+currentFile.toString()+" to disk "+currentDisk);
                         currentFile = null;
                         Main.DISK_ALLOCATOR.release(currentDisk);
                     }
@@ -44,17 +46,22 @@ public class UserThread extends Thread {
                         if(info == null) {
                             info = new FileInfo();
                             info.diskNumber = currentDisk;
-                            info.fileLength = 0;
+                            info.fileLength = 1;
                             info.startingSector = Main.DISK_MANAGER.getAndIncrementNextFreeSector(currentDisk);
                             Main.DISK_MANAGER.createFile(currentFile, info);
+                            disk.write(info.startingSector,currentLine);
+
+                            //Because a file write takes 200 milliseconds
+                            Thread.sleep(200);
                         }
-                        int sectorOffset = info.startingSector+info.fileLength;
-                        info.fileLength += 1;
+                        else {
+                            int nextFreeSector = Main.DISK_MANAGER.getAndIncrementNextFreeSector(currentDisk);
+                            info.fileLength = info.fileLength+1;
+                            disk.write(nextFreeSector,currentLine);
 
-                        disk.write(info.startingSector+sectorOffset,currentLine);
-
-                        //Because a file write takes 200 milliseconds
-                        Thread.sleep(200);
+                            //Because a file write takes 200 milliseconds
+                            Thread.sleep(200);
+                        }
                     }
                 }
             } catch (InterruptedException e) {
